@@ -1,5 +1,5 @@
 import 'package:mobx/mobx.dart';
-import 'package:tractian_challenge/companies/models/companies.json.dart';
+import 'package:tractian_challenge/models/companies.json.dart';
 
 import 'companies.service.dart';
 

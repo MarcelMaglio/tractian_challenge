@@ -4,8 +4,10 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:tractian_challenge/companies/companies.store.dart';
-import 'package:tractian_challenge/companies/models/companies.json.dart';
+import 'package:tractian_challenge/home/itens.page.dart';
+import 'package:tractian_challenge/models/companies.json.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../helpers/size_config.dart';
@@ -88,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool onCanPop() {
     DateTime now = DateTime.now();
     if (currentBackPressTime == null ||
-        now.difference(currentBackPressTime) > Duration(seconds: 2)) {
+        now.difference(currentBackPressTime) > const Duration(seconds: 2)) {
       currentBackPressTime = now;
       Fluttertoast.showToast(
           msg: 'Para fechar o app, toque duas\nvezes rapidamente em voltar.',
@@ -124,7 +126,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: () {
-                    // Implementação do onTap aqui
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                          type: PageTransitionType.rightToLeftWithFade,
+                          duration: const Duration(milliseconds: 700),
+                          child: ItensPage(id: r.id!)),
+                    );
                   },
                   child: Card(
                     color: Colors.blueAccent,
