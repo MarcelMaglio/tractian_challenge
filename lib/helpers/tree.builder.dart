@@ -27,6 +27,7 @@ class TreeBuilder {
         name: asset.name!,
         isComponent: isComponent,
         sensorType: asset.sensorType,
+        sensorId: asset.sensorId,
         status: asset.status,
       );
     }

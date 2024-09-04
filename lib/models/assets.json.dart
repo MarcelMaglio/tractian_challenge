@@ -4,6 +4,7 @@ class AssetsJson {
   String? name;
   String? parentId;
   String? sensorType;
+  String? sensorId;
   String? status;
 
   AssetsJson(
@@ -12,6 +13,7 @@ class AssetsJson {
         this.name,
         this.parentId,
         this.sensorType,
+        this.sensorId,
         this.status});
 
   AssetsJson.fromJson(Map<String, dynamic> json) {
@@ -19,6 +21,7 @@ class AssetsJson {
     locationId = json['locationId'];
     name = json['name'];
     parentId = json['parentId'];
+    sensorId = json['sensorId'];
     sensorType = json['sensorType'];
     status = json['status'];
   }
@@ -30,6 +33,7 @@ class AssetsJson {
     data['name'] = this.name;
     data['parentId'] = this.parentId;
     data['sensorType'] = this.sensorType;
+    data['sensorId'] = this.sensorId;
     data['status'] = this.status;
     return data;
   }

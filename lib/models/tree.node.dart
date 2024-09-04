@@ -5,6 +5,7 @@ class TreeNode {
   final String name;
   final bool isComponent;
   final String? sensorType;
+  final String? sensorId;
   final String? status;
   ObservableList<TreeNode> children;
 
@@ -12,6 +13,7 @@ class TreeNode {
     required this.id,
     required this.name,
     this.isComponent = false,
+    this.sensorId,
     this.sensorType,
     this.status,
     List<TreeNode>? children,

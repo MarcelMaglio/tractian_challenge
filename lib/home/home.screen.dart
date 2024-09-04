@@ -35,11 +35,28 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Image.asset('assets/images/tractian-texto.png',
-              fit: BoxFit.cover),
+          title: Stack(
+            alignment: Alignment.center,
+            children: [
+              Image.asset('assets/images/tractian-texto.png',
+                  fit: BoxFit.cover),
+              Positioned(
+                right: 0,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.exit_to_app,
+                    color: Colors.white,
+                    size: SizeConfig.of(context).dynamicScaleSize(size: 24),
+                  ),
+                  onPressed: () {
+                    _showExitConfirmationDialog(context);
+                  },
+                ),
+              )
+            ],
+          ),
           centerTitle: true,
           backgroundColor: const Color(0xFF141C2C),
-          //iconTheme: IconThemeData(color: Colors.white),
         ),
         body: _body(context),
       ),
@@ -87,26 +104,37 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  bool onCanPop() {
-    DateTime now = DateTime.now();
-    if (currentBackPressTime == null ||
-        now.difference(currentBackPressTime) > const Duration(seconds: 2)) {
-      currentBackPressTime = now;
-      Fluttertoast.showToast(
-          msg: 'Para fechar o app, toque duas\nvezes rapidamente em voltar.',
-          gravity: ToastGravity.BOTTOM,
-          toastLength: Toast.LENGTH_LONG,
-          backgroundColor: Theme.of(context).colorScheme.onPrimary,
-          textColor: Colors.white);
-      return false;
-    }
-    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-    return true;
-  }
-
   Widget _erroAoBuscarCompanies() {
     // Implementação do erro aqui
     return Container();
+  }
+
+  void _showExitConfirmationDialog(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmar saída'),
+          content:
+              const Text('Você tem certeza de que deseja sair do aplicativo?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Sair'),
+              onPressed: () {
+                SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   AnimationConfiguration buildAnimationConfiguration(
@@ -131,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       PageTransition(
                           type: PageTransitionType.rightToLeftWithFade,
                           duration: const Duration(milliseconds: 700),
-                          child: ItensPage(id: r.id!)),
+                          child: ItensPage(id: r.id!, nomeEmpresa: r.name!)),
                     );
                   },
                   child: Card(
