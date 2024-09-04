@@ -25,6 +25,7 @@ class _ItensPageState extends State<ItensPage> {
   final locationStore = LocationStore();
   List<TreeNode>? nodeTree;
   final TextEditingController _textController = TextEditingController();
+  String filtroBotoes = '';
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _ItensPageState extends State<ItensPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           widget.nomeEmpresa,
@@ -115,30 +117,67 @@ class _ItensPageState extends State<ItensPage> {
 
   buildBotoes() {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        ElevatedButton.icon(
-          onPressed: () {},
-          icon: Icon(MdiIcons.lightningBolt),
-          label: const Text('Sensor de Energia'),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            //minimumSize: Size(double.infinity, 48),
-          ),
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton.icon(
-          onPressed: () {},
-          icon: Icon(MdiIcons.alertCircleOutline, size: 24),
-          label: const Text('Crítico'),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: () {
+              setState(() {
+                filtroBotoes = '';
+                _textController.clear();
+              });
+            },
+            icon: Icon(MdiIcons.apps, size: 24),
+            label: const Text('Todos'),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
           ),
         ),
+        SizedBox(width: SizeConfig.of(context).dynamicScaleSize(size: 16)),
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: () {
+              setState(() {
+                filtroBotoes = 'energy';
+              });
+            },
+            icon: Icon(MdiIcons.lightningBolt),
+            label: const Text('Energia'),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: SizeConfig.of(context).dynamicScaleSize(size: 16)),
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: () {
+              setState(() {
+                filtroBotoes = 'alert';
+              });
+            },
+            icon: Icon(MdiIcons.alertCircleOutline, size: 24),
+            label: const Text('Crítico'),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+          ),
+        ),
+
       ],
     );
   }
@@ -182,12 +221,13 @@ class _ItensPageState extends State<ItensPage> {
                   HapticFeedback.vibrate();
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     setState(() {
+                      filtroBotoes = '';
                       _textController.clear();
                     });
                   });
                 },
                 child: Visibility(
-                  //visible: _textController.text.isNotEmpty,
+                  visible: _textController.text.isNotEmpty,
                   child: Icon(
                     Icons.cancel,
                     color: const Color(0xFF141C2C),
@@ -216,7 +256,7 @@ class _ItensPageState extends State<ItensPage> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderSide: const BorderSide(
-                  color: const Color(0xFF141C2C),
+                  color: Color(0xFF141C2C),
                 ),
                 borderRadius: BorderRadius.circular(
                   SizeConfig.of(context).dynamicScaleSize(size: 10),
@@ -244,6 +284,12 @@ class _ItensPageState extends State<ItensPage> {
               child: ExpansionTile(
                 leading: _getLeadingIcon(node),
                 title: Text(node.name),
+                initiallyExpanded: node.isExpanded,
+                onExpansionChanged: (expanded) {
+                  setState(() {
+                    node.isExpanded = expanded;
+                  });
+                },
                 trailing: node.children.isEmpty
                     ? null
                     : const Icon(Icons.arrow_drop_down),
@@ -277,6 +323,9 @@ class _ItensPageState extends State<ItensPage> {
     for (var node in nodes) {
       if (_encontrouNode(node, queryLower)) {
         filteredNodes.add(node);
+        if (queryLower.trim().isNotEmpty) {
+          _expandirPais(node);
+        }
       }
     }
 
@@ -284,7 +333,20 @@ class _ItensPageState extends State<ItensPage> {
   }
 
   bool _encontrouNode(TreeNode node, String query) {
-    if (node.name.toLowerCase().contains(query)) {
+    if (filtroBotoes.toLowerCase() == 'energy' && node.sensorType != null) {
+      if (node.sensorType!.toLowerCase().contains('energy')) {
+        return true;
+      }
+    }
+
+    if (filtroBotoes.toLowerCase() == 'alert' && node.status != null) {
+      if (node.status!.toLowerCase().contains('alert')) {
+        return true;
+      }
+    }
+
+    if ((node.name.toLowerCase().contains(query)) &&
+        (filtroBotoes.trim().isEmpty)) {
       return true;
     }
 
@@ -295,5 +357,12 @@ class _ItensPageState extends State<ItensPage> {
     }
 
     return false;
+  }
+
+  void _expandirPais(TreeNode node) {
+    node.isExpanded = true;
+    for (var child in node.children) {
+      _expandirPais(child);
+    }
   }
 }

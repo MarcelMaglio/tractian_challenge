@@ -16,6 +16,7 @@ class TreeBuilder {
       nodeMap[location.id!] = TreeNode(
         id: location.id!,
         name: location.name!,
+        isExpanded: false
       );
     }
 
@@ -29,6 +30,7 @@ class TreeBuilder {
         sensorType: asset.sensorType,
         sensorId: asset.sensorId,
         status: asset.status,
+        isExpanded: false
       );
     }
 

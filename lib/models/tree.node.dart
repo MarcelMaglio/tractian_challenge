@@ -7,6 +7,7 @@ class TreeNode {
   final String? sensorType;
   final String? sensorId;
   final String? status;
+  bool isExpanded;
   ObservableList<TreeNode> children;
 
   TreeNode({
@@ -16,6 +17,7 @@ class TreeNode {
     this.sensorId,
     this.sensorType,
     this.status,
+    this.isExpanded = false,
     List<TreeNode>? children,
   }) : children = ObservableList.of(children ?? []);
 }
